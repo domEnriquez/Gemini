@@ -1,0 +1,14 @@
+﻿@model IEnumerable<HMSWebApp.Models.VoteEntryDisplay>
+
+@foreach (var item in Model) {
+    <div>
+        <h4>@item.Voter.LastName @item.Voter.FirstName</h4>
+        <h4>@item.Voter.EmailAddress</h4>
+        <h4>@item.TeamName</h4>
+        <h4>@item.VoteEntryType</h4>
+        <h4>@item.Payment.Amount</h4>
+        <h4>@item.Payment.Currency</h4>
+        <h4>@item.Payment.PesoEquivalent</h4>
+    </div>
+    <hr />
+}

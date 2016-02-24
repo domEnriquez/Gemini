@@ -1,0 +1,68 @@
+﻿@model HMSWebApp.Models.VoteEntryDisplay
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>New Vote Entry</legend>
+
+        <!-- Last Name Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Voter.LastName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Voter.LastName)
+        </div>
+
+        <!-- First Name Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Voter.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Voter.FirstName)
+        </div>
+
+        <!-- Email Address Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Voter.EmailAddress)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Voter.EmailAddress)
+        </div>
+
+        <!-- Team Name Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TeamName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TeamName)
+        </div>
+
+        <!-- Type Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VoteEntryType)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VoteEntryType)
+        </div>
+
+         <!-- Payment Amount Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Payment.Amount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Payment.Amount)
+        </div>
+
+         <!-- Payment Currency Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Payment.Currency)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Payment.Currency)
+        </div>        
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
