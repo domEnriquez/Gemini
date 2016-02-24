@@ -6,13 +6,35 @@ using HMSWebApp.Models;
 
 namespace HMSWebApp.Repository
 {
+    /// <summary>
+    ///  Data logic class for handling add/delete/update of vote entry objects in the database
+    /// </summary>
     public class VoteEntryRepository
     {
         HMSDb _db = new HMSDb();
+
+        #region Fields
+
+        /// <summary>
+        ///  PaymentRepository object for add/delete/update of payment objects in the database
+        /// </summary>
         private PaymentRepository paymentRepository { get; set; }
+
+        /// <summary>
+        ///  PaymentRepository object for add/delete/update of voter objects in the database
+        /// </summary>
         private VoterRepository voterRepository { get; set; }
+
+        /// <summary>
+        ///  PaymentRepository object for add/delete/update of team objects in the database
+        /// </summary>
         private TeamRepository teamRepository { get; set; }
 
+        #endregion
+
+        /// <summary>
+        ///  VoteEntryRepository constructor
+        /// </summary>
         public VoteEntryRepository()
         {
             paymentRepository = new PaymentRepository();
@@ -46,6 +68,10 @@ namespace HMSWebApp.Repository
 
         }
 
+        /// <summary>
+        ///  Retrieces all of vote entry objects stored in the database
+        /// </summary>
+        /// <returns>List of vote entry objects</returns>
         public List<VoteEntry> RetrieveAll()
         {
             List<VoteEntry> voteEntries = _db.VoteEntry.ToList();
@@ -102,22 +128,16 @@ namespace HMSWebApp.Repository
             return voteEntriesDisplay;
         }
 
-
+        /// <summary>
+        ///  Adds a vote entry object into the database
+        /// </summary>
+        /// <param name="voteEntry"></param>
         private void StoreVoteEntry(VoteEntry voteEntry)
         {
             if (voteEntry != null)
             {
                 _db.VoteEntry.Add(voteEntry);
                 _db.SaveChanges();
-            }
-        }
-
-
-        public void Dispose(bool disposing)
-        {
-            if (_db != null)
-            {
-                _db.Dispose();
             }
         }
 
