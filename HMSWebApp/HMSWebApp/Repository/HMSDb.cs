@@ -15,6 +15,9 @@ namespace HMSWebApp.Repository
 
         }
 
+        /// <summary>
+        ///  DbSet for VoteEntry
+        /// </summary>
         public DbSet<VoteEntry> VoteEntry { get; set; }
         public DbSet<Payment> Payment { get; set; }
         public DbSet<Voter> Voter { get; set; }
