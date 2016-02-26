@@ -21,7 +21,10 @@ namespace HMSWebApp.Repository
             return payment;
         }
 
-
+        /// <summary>
+        ///  Stores a payment into the database
+        /// </summary>
+        /// <param name="payment">The payment object</param>
         public void StorePayment(Payment payment)
         {
             if (payment != null)
@@ -31,6 +34,10 @@ namespace HMSWebApp.Repository
             }
         }
 
+        /// <summary>
+        ///  Updates a payment in the database
+        /// </summary>
+        /// <param name="payment">The payment object</param>
         public void UpdatePayment(Payment payment)
         {
             if (payment != null)
