@@ -1,4 +1,4 @@
-﻿@model HMSWebApp.Models.VoteEntryDisplay
+﻿@model HMSWebApp.ViewModels.VoteEntryViewModel
 
 @using (Html.BeginForm())
 {
@@ -7,34 +7,34 @@
 
         <!-- Last Name Fields -->
         <div class="editor-label">
-            @Html.LabelFor(model => model.Voter.LastName)
+            @Html.LabelFor(model => model.VoterLastName)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Voter.LastName)
+            @Html.EditorFor(model => model.VoterLastName)
         </div>
 
         <!-- First Name Fields -->
         <div class="editor-label">
-            @Html.LabelFor(model => model.Voter.FirstName)
+            @Html.LabelFor(model => model.VoterFirstName)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Voter.FirstName)
+            @Html.EditorFor(model => model.VoterFirstName)
         </div>
 
         <!-- Email Address Fields -->
         <div class="editor-label">
-            @Html.LabelFor(model => model.Voter.EmailAddress)
+            @Html.LabelFor(model => model.VoterEmailAddress)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Voter.EmailAddress)
+            @Html.EditorFor(model => model.VoterEmailAddress)
         </div>
 
         <!-- Team Name Fields -->
         <div class="editor-label">
-            @Html.LabelFor(model => model.TeamName)
+            @Html.LabelFor(model => model.TeamId)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.TeamName)
+            @Html.EditorFor(model => model.TeamId)
         </div>
 
         <!-- Type Fields -->
@@ -47,18 +47,18 @@
 
          <!-- Payment Amount Fields -->
         <div class="editor-label">
-            @Html.LabelFor(model => model.Payment.Amount)
+            @Html.LabelFor(model => model.PaymentAmount)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Payment.Amount)
+            @Html.EditorFor(model => model.PaymentAmount)
         </div>
 
          <!-- Payment Currency Fields -->
         <div class="editor-label">
-            @Html.LabelFor(model => model.Payment.Currency)
+            @Html.LabelFor(model => model.PaymentCurrency)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.Payment.Currency)
+            @Html.EditorFor(model => model.PaymentCurrency)
         </div>        
 
         <p>

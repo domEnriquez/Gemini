@@ -11,9 +11,17 @@ namespace HMSWebApp.Models
         {
 
         }
+
         public Voter(int voterId)
         {
             Id = voterId;
+        }
+
+        public Voter(string lastName, string firstName, string emailAddress)
+        {
+            LastName = lastName;
+            FirstName = firstName;
+            EmailAddress = emailAddress;
         }
 
         public int Id { get; set; }

@@ -1,14 +1,16 @@
-﻿@model IEnumerable<HMSWebApp.Models.VoteEntryDisplay>
+﻿@model IEnumerable<HMSWebApp.ViewModels.VoteEntryViewModel>
 
 @foreach (var item in Model) {
     <div>
-        <h4>@item.Voter.LastName @item.Voter.FirstName</h4>
-        <h4>@item.Voter.EmailAddress</h4>
-        <h4>@item.TeamName</h4>
+        <input type="hidden" value=@item.VoteEntryId />
+        <h4>@item.VoterLastName @item.VoterFirstName</h4>
+        <h4>@item.VoterEmailAddress</h4>
         <h4>@item.VoteEntryType</h4>
-        <h4>@item.Payment.Amount</h4>
-        <h4>@item.Payment.Currency</h4>
-        <h4>@item.Payment.PesoEquivalent</h4>
+        <h4>@item.PaymentAmount</h4>
+        <h4>@item.PaymentCurrency</h4>
+        <h4>@item.PaymentPesoEquivalent</h4>
+        @Html.ActionLink("Delete", "Delete", new { voteEntryId=item.VoteEntryId })
+        @Html.ActionLink("Edit", "Edit", new { voteEntryId=item.VoteEntryId })
     </div>
     <hr />
 }

@@ -191,7 +191,6 @@
     <Compile Include="Models\Team.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\VoteEntry.cs" />
-    <Compile Include="Models\VoteEntryDisplay.cs" />
     <Compile Include="Models\Voter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\HMSDb.cs" />
@@ -200,6 +199,7 @@
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\VoteEntryRepository.cs" />
     <Compile Include="Repository\VoterRepository.cs" />
+    <Compile Include="ViewModels\VoteEntryViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
@@ -273,7 +273,9 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -301,11 +303,12 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\VoteEntry\ViewAll.cshtml" />
-    <Content Include="Views\VoteEntry\PartialViews\_Payment.cshtml" />
     <Content Include="Views\VoteEntry\Encode.cshtml" />
+    <Content Include="Views\VoteEntry\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\VoteEntry\PartialViews\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

@@ -1,0 +1,65 @@
+﻿@model HMSWebApp.ViewModels.VoteEntryViewModel
+
+@using (Html.BeginForm())
+{
+    <fieldset>
+        <legend>Edit Vote Entry Details</legend>
+
+        @Html.HiddenFor(model => model.VoteEntryId)
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VoterLastName);
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VoterLastName);
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VoterFirstName);
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VoterFirstName);
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VoterEmailAddress);
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VoterEmailAddress);
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.TeamId);
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.TeamId);
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.VoteEntryType);
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.VoteEntryType);
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PaymentAmount);
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PaymentAmount);
+        </div>
+
+        <!-- Payment Currency Fields -->
+        <div class="editor-label">
+            @Html.LabelFor(model => model.PaymentCurrency)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.PaymentCurrency)
+        </div>
+         
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
