@@ -17,9 +17,10 @@ namespace HMSWebApp.Models
         }
 
         public int Id { get; private set; }
+        public string Type { get; set; }
         public int VoterId { get; set; }
         public int TeamId { get; set; }
-        public virtual Payment Payment { get; set; }
-        public string Type { get; set; }
+        public int PaymentId { get; set; }
+        public Payment Payment { get; set; }
     }
 }

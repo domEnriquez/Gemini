@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using HMSWebApp.Models;
+using HMSWebApp.ViewModels;
 
 namespace HMSWebApp.Repository
 {
@@ -11,8 +13,6 @@ namespace HMSWebApp.Repository
     /// </summary>
     public class VoteEntryRepository
     {
-        HMSDb _db = new HMSDb();
-
         #region Fields
 
         /// <summary>
@@ -32,6 +32,8 @@ namespace HMSWebApp.Repository
 
         #endregion
 
+        #region Counstructor
+
         /// <summary>
         ///  VoteEntryRepository constructor
         /// </summary>
@@ -42,104 +44,158 @@ namespace HMSWebApp.Repository
             teamRepository = new TeamRepository();
         }
 
+        #endregion
+
+        #region Public methods
+
         /// <summary>
         ///  Stores the vote entry to the database
         /// </summary>
-        public void Encode(VoteEntryDisplay voteEntryDisplay)
+        public void Encode(VoteEntryViewModel voteEntryViewModel)
         {
-            VoteEntry voteEntry = new VoteEntry();
-
-            //Storing voter details
-            voterRepository.AddVoterIfNonExisting(voteEntryDisplay.Voter);
-
-            //Getting team details
-            var team = teamRepository.RetrieveByName(voteEntryDisplay.TeamName);
-
-
-            if (voteEntryDisplay != null && team != null)
+            using (var _db = new HMSDb())
             {
-                voteEntry.VoterId = voteEntryDisplay.Voter.Id;
-                voteEntry.TeamId = team.Id;
-                voteEntry.Payment = voteEntryDisplay.Payment;
-                voteEntry.Type = voteEntryDisplay.VoteEntryType;
-
-                StoreVoteEntry(voteEntry);
+                if (voteEntryViewModel != null)
+                {
+                    var voter = voterRepository.CreateNewVoter(voteEntryViewModel.VoterLastName, voteEntryViewModel.VoterFirstName, voteEntryViewModel.VoterEmailAddress);
+                    voterRepository.AddVoterIfNonExisting(voter);
+                    var voteEntry = ConvertToVoteEntryEntity(voteEntryViewModel, voter);
+                    StoreVoteEntry(voteEntry);
+                }
             }
-
         }
 
-        /// <summary>
-        ///  Retrieces all of vote entry objects stored in the database
-        /// </summary>
-        /// <returns>List of vote entry objects</returns>
-        public List<VoteEntry> RetrieveAll()
+        public List<VoteEntryViewModel> RetrieveAllVoteEntriesViewModel()
         {
-            List<VoteEntry> voteEntries = _db.VoteEntry.ToList();
-            return voteEntries;
-        }
-
-
-        /// <summary>
-        ///  Edits a vote entry
-        /// </summary>
-        public void Edit(int voteEntryId)
-        {
-
-        }
-
-        /// <summary>
-        ///  Deletes a vote entry
-        /// </summary>
-        /// <param name="voteEntryId"></param>
-        public void Delete(int voteEntryId)
-        {
-        }
-
-        /// <summary>
-        ///  Retrieves a VoteEntryDisplay object that contains all the necessary information to be shown to the user
-        /// </summary>
-        /// <returns></returns>
-        public VoteEntryDisplay RetrieveVoteEntryDisplay()
-        {
-            VoteEntryDisplay voteEntryDisplay = new VoteEntryDisplay();
-            
-            return voteEntryDisplay;
-        }
-
-        /// <summary>
-        ///  Retrieves a list of VoteEntryDisplay object
-        /// </summary>
-        /// <returns></returns>
-        public List<VoteEntryDisplay> RetrieveMultipleVoteEntryDisplay()
-        {
-            List<VoteEntryDisplay> voteEntriesDisplay = new List<VoteEntryDisplay>();
-
+            List<VoteEntryViewModel> voteEntryViewModelList = new List<VoteEntryViewModel>();
+            //Retrieving all voteEntry objects
             var voteEntries = RetrieveAll();
-
             foreach (var voteEntry in voteEntries)
             {
-                VoteEntryDisplay voteEntryDisplay = new VoteEntryDisplay();
-                voteEntryDisplay.Voter = voterRepository.Retrieve(voteEntry.VoterId);
-                voteEntryDisplay.TeamName = teamRepository.RetrieveById(voteEntry.TeamId).Name;
-                voteEntryDisplay.Payment = voteEntry.Payment;
-                voteEntriesDisplay.Add(voteEntryDisplay);
+                var voter = voterRepository.RetrieveById(voteEntry.VoterId);
+                var voteEntryViewModel = ConvertToVoteEntryviewModel(voteEntry, voter);
+                voteEntryViewModelList.Add(voteEntryViewModel);
             }
-
-            return voteEntriesDisplay;
+            return voteEntryViewModelList;
         }
 
-        /// <summary>
-        ///  Adds a vote entry object into the database
-        /// </summary>
-        /// <param name="voteEntry"></param>
+
+        public VoteEntryViewModel RetrieveSingleVoteEntryViewModel(int voteEntryId)
+        {
+            VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryId);
+            var voter = voterRepository.RetrieveById(voteEntry.VoterId);
+            var voteEntryViewModel = ConvertToVoteEntryviewModel(voteEntry, voter);
+            return voteEntryViewModel;
+        }
+
+        public void UpdateVoteEntryViewModel(VoteEntryViewModel voteEntryViewModel)
+        {
+            VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryViewModel.VoteEntryId);
+            var originalVoter = voterRepository.RetrieveById(voteEntry.VoterId);
+            var newVoter = voterRepository.CreateNewVoter(voteEntryViewModel.VoterLastName, voteEntryViewModel.VoterFirstName, voteEntryViewModel.VoterEmailAddress);
+            voterRepository.UpdateVoterDetails(originalVoter, newVoter);
+            UpdateVoteEntry(voteEntry, voteEntryViewModel);
+        }
+
+        private void UpdateVoteEntry(VoteEntry voteEntry, VoteEntryViewModel voteEntryViewModel)
+        {
+            voteEntry.Type = voteEntryViewModel.VoteEntryType;
+            voteEntry.TeamId = voteEntryViewModel.TeamId;
+            voteEntry.Payment.Amount = voteEntryViewModel.PaymentAmount;
+            voteEntry.Payment.Currency = voteEntryViewModel.PaymentCurrency;
+            voteEntry.Payment.PesoEquivalent = voteEntryViewModel.PaymentPesoEquivalent;
+            UpdateVoteEntry(voteEntry);
+        }
+
+        public void DeleteVoteEntryViewModel(int voteEntryId)
+        {
+            VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryId);
+            DeleteVoteEntry(voteEntry);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private VoteEntryViewModel ConvertToVoteEntryviewModel(VoteEntry voteEntry, Voter voter)
+        {
+            VoteEntryViewModel voteEntryViewModel = new VoteEntryViewModel();
+
+            voteEntryViewModel.VoteEntryId = voteEntry.Id;
+            voteEntryViewModel.VoteEntryType = voteEntry.Type;
+            voteEntryViewModel.VoterLastName = voter.LastName;
+            voteEntryViewModel.VoterFirstName = voter.FirstName;
+            voteEntryViewModel.VoterEmailAddress = voter.EmailAddress;
+            voteEntryViewModel.PaymentAmount = voteEntry.Payment.Amount;
+            voteEntryViewModel.PaymentCurrency = voteEntry.Payment.Currency;
+            voteEntryViewModel.PaymentPesoEquivalent = voteEntry.Payment.PesoEquivalent;
+            voteEntryViewModel.TeamId = voteEntry.TeamId;
+
+            return voteEntryViewModel;
+        }
+
+        private VoteEntry ConvertToVoteEntryEntity(VoteEntryViewModel voteEntryViewModel, Voter voter)
+        {
+            VoteEntry voteEntry = new VoteEntry(voteEntryViewModel.VoteEntryId);
+            voteEntry.Type = voteEntryViewModel.VoteEntryType;
+            voteEntry.TeamId = voteEntryViewModel.TeamId;
+            voteEntry.Payment = new Payment(voteEntryViewModel.PaymentAmount, voteEntryViewModel.PaymentCurrency, voteEntryViewModel.PaymentPesoEquivalent);
+            voteEntry.VoterId = voter.Id;
+            return voteEntry;
+        }
+
+        private List<VoteEntry> RetrieveAll()
+        {
+            using (var _db = new HMSDb())
+            {
+                List<VoteEntry> voteEntries = _db.VoteEntry.AsNoTracking().Include("Payment").ToList();
+                return voteEntries;
+            }
+        }
+
         private void StoreVoteEntry(VoteEntry voteEntry)
         {
-            if (voteEntry != null)
+            using (var _db = new HMSDb())
             {
-                _db.VoteEntry.Add(voteEntry);
+                if (voteEntry != null)
+                {
+                    _db.VoteEntry.Add(voteEntry);
+                    _db.SaveChanges();
+                }
+            }
+        }
+
+        private VoteEntry RetrieveSingleVoteEntry(int voteEntryId)
+        {
+            using (var _db = new HMSDb())
+            {
+                if (voteEntryId != null)
+                {
+                    var voteEntry = _db.VoteEntry.Include("Payment").FirstOrDefault(entry => entry.Id == voteEntryId);
+                    return voteEntry;
+                }
+            }
+            return null;
+        }
+
+        private void UpdateVoteEntry(VoteEntry voteEntry)
+        {
+            using (var _db = new HMSDb())
+            {
+                _db.Entry(voteEntry).State = EntityState.Modified;
+                _db.Entry(voteEntry.Payment).State = EntityState.Modified;
                 _db.SaveChanges();
             }
         }
 
+        private void DeleteVoteEntry(VoteEntry voteEntry)
+        {
+            using (var _db = new HMSDb())
+            {
+                _db.Entry(voteEntry).State = EntityState.Deleted;
+                _db.SaveChanges();
+            }
+        }
+        #endregion
     }
 }

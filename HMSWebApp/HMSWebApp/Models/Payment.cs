@@ -13,9 +13,11 @@ namespace HMSWebApp.Models
 
         }
 
-        public Payment(int paymentId)
+        public Payment(double amount, string currency, double pesoEquivalent)
         {
-            Id = paymentId;
+            this.Amount = amount;
+            this.Currency = currency;
+            this.PesoEquivalent = pesoEquivalent;
         }
 
         public int Id { get; private set; }
