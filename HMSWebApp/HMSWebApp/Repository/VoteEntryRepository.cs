@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
+using HMSWebApp.Common;
+using HMSWebApp.Enums;
 using HMSWebApp.Models;
 using HMSWebApp.ViewModels;
 
@@ -58,7 +61,15 @@ namespace HMSWebApp.Repository
                 if (voteEntryViewModel != null)
                 {
                     var voter = voterRepository.CreateNewVoter(voteEntryViewModel.VoterLastName, voteEntryViewModel.VoterFirstName, voteEntryViewModel.VoterEmailAddress);
-                    voterRepository.AddVoterIfNonExisting(voter);
+                    if (!voterRepository.VoterAlreadyExists(voter))
+                    {
+                        voterRepository.AddVoter(voter);
+                    }
+                    else
+                    {
+                        voter = voterRepository.RetrieveByEmailAddress(voter.EmailAddress);
+                    }
+
                     var voteEntry = ConvertToVoteEntryEntity(voteEntryViewModel, voter);
                     StoreVoteEntry(voteEntry);
                 }
@@ -99,10 +110,10 @@ namespace HMSWebApp.Repository
 
         private void UpdateVoteEntry(VoteEntry voteEntry, VoteEntryViewModel voteEntryViewModel)
         {
-            voteEntry.Type = voteEntryViewModel.VoteEntryType;
+            voteEntry.Type = EnumHelper.GetName<VoteEntryTypes>(voteEntryViewModel.VoteEntryType);
             voteEntry.TeamId = voteEntryViewModel.TeamId;
             voteEntry.Payment.Amount = voteEntryViewModel.PaymentAmount;
-            voteEntry.Payment.Currency = voteEntryViewModel.PaymentCurrency;
+            voteEntry.Payment.Currency = EnumHelper.GetName<PaymentCurrencies>(voteEntryViewModel.PaymentCurrency);
             voteEntry.Payment.PesoEquivalent = voteEntryViewModel.PaymentPesoEquivalent;
             UpdateVoteEntry(voteEntry);
         }
@@ -112,6 +123,20 @@ namespace HMSWebApp.Repository
             VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryId);
             DeleteVoteEntry(voteEntry);
         }
+
+        public VoteEntryViewModel PrepareViewDataResources(VoteEntryViewModel voteEntryViewModel)
+        {
+            voteEntryViewModel.Teams = teamRepository.RetrieveAll().Select(x =>
+                                            new SelectListItem{
+                                                Text = x.Name,
+                                                Value = x.Id.ToString()
+                                            });
+            voteEntryViewModel.VoteEntryTypes = EnumHelper.GetEnumSelectList<VoteEntryTypes>();
+            voteEntryViewModel.PaymentCurrencies = EnumHelper.GetEnumSelectList<PaymentCurrencies>();
+
+            return voteEntryViewModel;
+        }
+
 
         #endregion
 
@@ -130,6 +155,7 @@ namespace HMSWebApp.Repository
             voteEntryViewModel.PaymentCurrency = voteEntry.Payment.Currency;
             voteEntryViewModel.PaymentPesoEquivalent = voteEntry.Payment.PesoEquivalent;
             voteEntryViewModel.TeamId = voteEntry.TeamId;
+            voteEntryViewModel.TeamName = teamRepository.RetrieveTeamName(voteEntry.TeamId);
 
             return voteEntryViewModel;
         }
@@ -137,9 +163,9 @@ namespace HMSWebApp.Repository
         private VoteEntry ConvertToVoteEntryEntity(VoteEntryViewModel voteEntryViewModel, Voter voter)
         {
             VoteEntry voteEntry = new VoteEntry(voteEntryViewModel.VoteEntryId);
-            voteEntry.Type = voteEntryViewModel.VoteEntryType;
+            voteEntry.Type = EnumHelper.GetName<VoteEntryTypes>(voteEntryViewModel.VoteEntryType);
             voteEntry.TeamId = voteEntryViewModel.TeamId;
-            voteEntry.Payment = new Payment(voteEntryViewModel.PaymentAmount, voteEntryViewModel.PaymentCurrency, voteEntryViewModel.PaymentPesoEquivalent);
+            voteEntry.Payment = new Payment(voteEntryViewModel.PaymentAmount, EnumHelper.GetName<PaymentCurrencies>(voteEntryViewModel.PaymentCurrency), voteEntryViewModel.PaymentPesoEquivalent);
             voteEntry.VoterId = voter.Id;
             return voteEntry;
         }

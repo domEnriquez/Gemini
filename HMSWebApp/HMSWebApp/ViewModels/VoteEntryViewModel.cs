@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace HMSWebApp.ViewModels
 {
@@ -16,5 +17,9 @@ namespace HMSWebApp.ViewModels
         public double PaymentAmount { get; set; }
         public string PaymentCurrency { get; set; }
         public double PaymentPesoEquivalent { get; set; }
+        public string TeamName { get; set; }
+        public IEnumerable<SelectListItem> Teams { get; set; }
+        public IEnumerable<SelectListItem> VoteEntryTypes { get; set; }
+        public IEnumerable<SelectListItem> PaymentCurrencies { get; set; }
     }
 }
