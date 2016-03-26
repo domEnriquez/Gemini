@@ -34,7 +34,8 @@
             @Html.LabelFor(model => model.TeamId)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.TeamId)
+            @Html.DropDownListFor(model => model.TeamId, Model.Teams)
+            @*@Html.EditorFor(model => model.TeamId)*@
         </div>
 
         <!-- Type Fields -->
@@ -42,7 +43,8 @@
             @Html.LabelFor(model => model.VoteEntryType)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.VoteEntryType)
+            @Html.DropDownListFor(model => model.VoteEntryType, Model.VoteEntryTypes)
+            @*@Html.EditorFor(model => model.VoteEntryType)*@
         </div>
 
          <!-- Payment Amount Fields -->
@@ -58,7 +60,8 @@
             @Html.LabelFor(model => model.PaymentCurrency)
         </div>
         <div class="editor-field">
-            @Html.EditorFor(model => model.PaymentCurrency)
+            @Html.DropDownListFor(model => model.PaymentCurrency, Model.PaymentCurrencies)
+            @*@Html.EditorFor(model => model.PaymentCurrency)*@
         </div>        
 
         <p>

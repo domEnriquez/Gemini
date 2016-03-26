@@ -21,13 +21,16 @@ namespace HMSWebApp.Controllers
         public ActionResult ViewAll()
         {
             var voteEntryViewModelList = _voteEntryDb.RetrieveAllVoteEntriesViewModel();
+
             return View(voteEntryViewModelList);
         }
 
         [HttpGet]
         public ActionResult Encode()
         {
-            return View();
+            VoteEntryViewModel voteEntryViewModel = new VoteEntryViewModel();
+            voteEntryViewModel = _voteEntryDb.PrepareViewDataResources(voteEntryViewModel);
+            return View(voteEntryViewModel);
         }
 
         [HttpPost]
@@ -39,7 +42,7 @@ namespace HMSWebApp.Controllers
                 _voteEntryDb.Encode(voteEntry);
             }
 
-            return View(voteEntry);
+            return RedirectToAction("ViewAll");
         }
 
         [HttpPost]
@@ -53,6 +56,7 @@ namespace HMSWebApp.Controllers
         public ActionResult Edit(int voteEntryId)
         {
             var voteEntryViewModel = _voteEntryDb.RetrieveSingleVoteEntryViewModel(voteEntryId);
+            voteEntryViewModel = _voteEntryDb.PrepareViewDataResources(voteEntryViewModel);
             if (voteEntryViewModel == null)
             {
                 return HttpNotFound();

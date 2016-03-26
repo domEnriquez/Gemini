@@ -26,5 +26,19 @@ namespace HMSWebApp.Repository
             }
 
         }
+
+        public string RetrieveTeamName(int teamId)
+        {
+            return RetrieveById(teamId).Name;
+        }
+
+        public List<Team> RetrieveAll()
+        {
+            using (var _db = new HMSDb())
+            {
+                List<Team> teams = _db.Team.AsNoTracking().ToList();
+                return teams;
+            }
+        }
     }
 }

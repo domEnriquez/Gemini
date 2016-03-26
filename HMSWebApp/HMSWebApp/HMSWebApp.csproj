@@ -181,7 +181,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\EnumHelper.cs" />
     <Compile Include="Controllers\VoteEntryController.cs" />
+    <Compile Include="Enums\PaymentCurrencies.cs" />
+    <Compile Include="Enums\VoteEntryTypes.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

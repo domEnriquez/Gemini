@@ -83,9 +83,9 @@ namespace HMSWebApp.Repository
             }
         }
 
-        public void AddVoterIfNonExisting(Voter voter)
+        public void AddVoter(Voter voter)
         {
-            if (voter != null && !VoterAlreadyExists(voter))
+            if (voter != null)
             {
                 StoreVoter(voter);
             }
