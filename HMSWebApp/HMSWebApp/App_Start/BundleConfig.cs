@@ -18,6 +18,10 @@ namespace HMSWebApp
                         "~/Scripts/jquery.unobtrusive*",
                         "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
+                        "~/Scripts/bootstrap.js",
+                        "~/Scripts/ie10-viewport-bug-workaround.js"));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
@@ -38,6 +42,14 @@ namespace HMSWebApp
                         "~/Content/themes/base/jquery.ui.datepicker.css",
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
+
+            bundles.Add(new StyleBundle("~/Content/bootstrap/css").Include(
+                "~/Content/Bootstrap/bootstrap.css"
+                ));
+
+            bundles.Add(new StyleBundle("~/Content/home/css").Include(
+                "~/Content/Home/Home.css"
+                ));
         }
     }
 }
