@@ -27,6 +27,11 @@ namespace HMSWebApp
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/ui/voteEntry").Include(
+                "~/Scripts/ui/voteEntry/voteEntryDataService.js",
+                "~/Scripts/ui/voteEntry/voteEntryAjax.js"
+                ));
+
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
