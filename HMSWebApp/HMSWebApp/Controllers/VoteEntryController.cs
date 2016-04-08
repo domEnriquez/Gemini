@@ -45,11 +45,10 @@ namespace HMSWebApp.Controllers
             return RedirectToAction("ViewAll");
         }
 
-        [HttpPost]
         public ActionResult Delete(int voteEntryId)
         {
             _voteEntryDb.DeleteVoteEntryViewModel(voteEntryId);
-            return RedirectToAction("ViewAll");
+            return new EmptyResult();
         }
 
         [HttpGet]
