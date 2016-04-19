@@ -270,6 +270,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\Home\FoodForHungryMinds.png" />
     <Content Include="Images\Home\HMS_Logo.png" />
+    <Content Include="Images\Home\school_background.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
