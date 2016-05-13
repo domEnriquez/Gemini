@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using HMSWebApp.Common;
 using HMSWebApp.Models;
 using HMSWebApp.Repository;
 using HMSWebApp.ViewModels;
@@ -11,8 +9,7 @@ namespace HMSWebApp.Controllers
 {
     public class VoteEntryController : Controller
     {
-
-        VoteEntryRepository _voteEntryDb = new VoteEntryRepository(); 
+        VoteEventsViewModel voteEvents = new VoteEventsViewModel();
 
         /// <summary>
         ///  Returns a view with a list of VoteEntryViewModel entities
@@ -20,26 +17,23 @@ namespace HMSWebApp.Controllers
         /// <returns></returns>
         public ActionResult ViewAll()
         {
-            var voteEntryViewModelList = _voteEntryDb.RetrieveAllVoteEntriesViewModel();
-
-            return View(voteEntryViewModelList);
+            return View(voteEvents.RetrieveAll());
         }
 
         [HttpGet]
         public ActionResult Encode()
         {
-            VoteEntryViewModel voteEntryViewModel = new VoteEntryViewModel();
-            voteEntryViewModel = _voteEntryDb.PrepareViewDataResources(voteEntryViewModel);
+            var voteEntryViewModel = new VoteEntryViewModel();
+            voteEntryViewModel.PrepareViewResources();
             return View(voteEntryViewModel);
         }
 
         [HttpPost]
         public ActionResult Encode(VoteEntryViewModel voteEntry)
         {
-            //Checks if the model binding is successful. If it didn't violate any violation rules
             if (ModelState.IsValid)
             {
-                _voteEntryDb.Encode(voteEntry);
+                voteEvents.Encode(voteEntry);
             }
 
             return RedirectToAction("ViewAll");
@@ -47,26 +41,27 @@ namespace HMSWebApp.Controllers
 
         public ActionResult Delete(int voteEntryId)
         {
-            _voteEntryDb.DeleteVoteEntryViewModel(voteEntryId);
+            voteEvents.DeleteVoteEntry(voteEntryId);
             return new EmptyResult();
         }
 
         [HttpGet]
         public ActionResult Edit(int voteEntryId)
         {
-            var voteEntryViewModel = _voteEntryDb.RetrieveSingleVoteEntryViewModel(voteEntryId);
-            voteEntryViewModel = _voteEntryDb.PrepareViewDataResources(voteEntryViewModel);
+            VoteEntryViewModel voteEntryViewModel = voteEvents.RetrieveSingle(voteEntryId);
             if (voteEntryViewModel == null)
             {
                 return HttpNotFound();
             }
+            else voteEntryViewModel.PrepareViewResources();
+
             return View(voteEntryViewModel);
         }
 
         [HttpPost]
         public ActionResult Edit(VoteEntryViewModel voteEntry) 
         {
-            _voteEntryDb.UpdateVoteEntryViewModel(voteEntry);
+            voteEvents.UpdateVoteEntry(voteEntry);
             return RedirectToAction("ViewAll");
         }
 
