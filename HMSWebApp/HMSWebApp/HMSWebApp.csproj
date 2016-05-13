@@ -176,20 +176,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\AuthConfig.cs" />
-    <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="App_Data\App_Start\AuthConfig.cs" />
+    <Compile Include="App_Data\App_Start\BundleConfig.cs" />
+    <Compile Include="App_Data\App_Start\FilterConfig.cs" />
+    <Compile Include="App_Data\App_Start\RouteConfig.cs" />
+    <Compile Include="App_Data\App_Start\WebApiConfig.cs" />
     <Compile Include="Common\EnumHelper.cs" />
+    <Compile Include="Common\OperationResult.cs" />
+    <Compile Include="Common\StateHelpers.cs" />
+    <Compile Include="Common\VoteEntryMapper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VoteEntryController.cs" />
     <Compile Include="Enums\PaymentCurrencies.cs" />
+    <Compile Include="Enums\State.cs" />
     <Compile Include="Enums\VoteEntryTypes.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IEntityRepository.cs" />
+    <Compile Include="Interfaces\IObjectWithState.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\Team.cs" />
@@ -200,10 +206,12 @@
     <Compile Include="Repository\HMSDb.cs" />
     <Compile Include="Repository\PaymentRepository.cs" />
     <Compile Include="Repository\TeamRepository.cs" />
+    <Compile Include="Repository\UnitOfWorkHms.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Repository\VoteEntryRepository.cs" />
     <Compile Include="Repository\VoterRepository.cs" />
     <Compile Include="ViewModels\VoteEntryViewModel.cs" />
+    <Compile Include="ViewModels\VoteEventsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Bootstrap\bootstrap-theme.css" />
@@ -335,7 +343,6 @@
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Views\VoteEntry\PartialViews\" />
   </ItemGroup>
   <ItemGroup>

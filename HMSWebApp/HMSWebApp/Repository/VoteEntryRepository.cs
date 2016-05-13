@@ -1,227 +1,92 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using HMSWebApp.Common;
-using HMSWebApp.Enums;
+using HMSWebApp.Interfaces;
 using HMSWebApp.Models;
-using HMSWebApp.ViewModels;
 
 namespace HMSWebApp.Repository
 {
     /// <summary>
     ///  Data logic class for handling add/delete/update of vote entry objects in the database
     /// </summary>
-    public class VoteEntryRepository
+    public class VoteEntryRepository : IVoteEntryInterface
     {
-        #region Fields
 
-        /// <summary>
-        ///  PaymentRepository object for add/delete/update of payment objects in the database
-        /// </summary>
-        private PaymentRepository paymentRepository { get; set; }
+        private HMSDb hmsdb;
+        //HMSDb hmsdb = new HMSDb();
 
-        /// <summary>
-        ///  PaymentRepository object for add/delete/update of voter objects in the database
-        /// </summary>
-        private VoterRepository voterRepository { get; set; }
-
-        /// <summary>
-        ///  PaymentRepository object for add/delete/update of team objects in the database
-        /// </summary>
-        private TeamRepository teamRepository { get; set; }
-
-        #endregion
-
-        #region Counstructor
-
-        /// <summary>
-        ///  VoteEntryRepository constructor
-        /// </summary>
-        public VoteEntryRepository()
+        public VoteEntryRepository(UnitOfWorkHms uow)
         {
-            paymentRepository = new PaymentRepository();
-            voterRepository = new VoterRepository();
-            teamRepository = new TeamRepository();
+            hmsdb = uow.HmsDb;
         }
 
-        #endregion
-
-        #region Public methods
-
-        /// <summary>
-        ///  Stores the vote entry to the database
-        /// </summary>
-        public void Encode(VoteEntryViewModel voteEntryViewModel)
+        public IQueryable<VoteEntry> All
         {
-            using (var _db = new HMSDb())
+            get { return hmsdb.VoteEntry; }
+        }
+
+
+        public IQueryable<VoteEntry> AllIncluding(string[] includeProperties)
+        {
+            IQueryable<VoteEntry> query = hmsdb.VoteEntry;
+            foreach (var includeProperty in includeProperties)
             {
-                if (voteEntryViewModel != null)
-                {
-                    var voter = voterRepository.CreateNewVoter(voteEntryViewModel.VoterLastName, voteEntryViewModel.VoterFirstName, voteEntryViewModel.VoterEmailAddress);
-                    if (!voterRepository.VoterAlreadyExists(voter))
-                    {
-                        voterRepository.AddVoter(voter);
-                    }
-                    else
-                    {
-                        voter = voterRepository.RetrieveByEmailAddress(voter.EmailAddress);
-                    }
-
-                    var voteEntry = ConvertToVoteEntryEntity(voteEntryViewModel, voter);
-                    StoreVoteEntry(voteEntry);
-                }
+                query = query.Include(includeProperty);
             }
+            return query;
         }
 
-        public List<VoteEntryViewModel> RetrieveAllVoteEntriesViewModel()
+        public VoteEntry SingleIncluding(int id, string[] includeProperties)
         {
-            List<VoteEntryViewModel> voteEntryViewModelList = new List<VoteEntryViewModel>();
-            //Retrieving all voteEntry objects
-            var voteEntries = RetrieveAll();
-            foreach (var voteEntry in voteEntries)
+            IQueryable<VoteEntry> query = hmsdb.VoteEntry;
+            foreach (var includeProperty in includeProperties)
             {
-                var voter = voterRepository.RetrieveById(voteEntry.VoterId);
-                var voteEntryViewModel = ConvertToVoteEntryviewModel(voteEntry, voter);
-                voteEntryViewModelList.Add(voteEntryViewModel);
+                query = query.Include(includeProperty);
             }
-            return voteEntryViewModelList;
+            return query.FirstOrDefault(voteEntry => voteEntry.Id == id);
         }
 
+        //public IQueryable<VoteEntry> AllIncluding(params Expression<Func<VoteEntry, object>>[] includeProperties)
+        //{
+        //    IQueryable<VoteEntry> query = hmsdb.VoteEntry;
+        //    foreach (var includeProperty in includeProperties)
+        //    {
+        //        query = query.Include(includeProperty);
+        //    }
+        //    return query;
+        //}
 
-        public VoteEntryViewModel RetrieveSingleVoteEntryViewModel(int voteEntryId)
+        public void InsertGraph(VoteEntry voteEntry)
         {
-            VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryId);
-            var voter = voterRepository.RetrieveById(voteEntry.VoterId);
-            var voteEntryViewModel = ConvertToVoteEntryviewModel(voteEntry, voter);
-            return voteEntryViewModel;
+            hmsdb.VoteEntry.Add(voteEntry);
         }
 
-        public void UpdateVoteEntryViewModel(VoteEntryViewModel voteEntryViewModel)
+        public void InsertObject(VoteEntry voteEntry)
         {
-            VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryViewModel.VoteEntryId);
-            var originalVoter = voterRepository.RetrieveById(voteEntry.VoterId);
-            var newVoter = voterRepository.CreateNewVoter(voteEntryViewModel.VoterLastName, voteEntryViewModel.VoterFirstName, voteEntryViewModel.VoterEmailAddress);
-            voterRepository.UpdateVoterDetails(originalVoter, newVoter);
-            UpdateVoteEntry(voteEntry, voteEntryViewModel);
+            hmsdb.Entry(voteEntry).State = EntityState.Added;
         }
 
-        private void UpdateVoteEntry(VoteEntry voteEntry, VoteEntryViewModel voteEntryViewModel)
+        public void Update(VoteEntry voteEntry)
         {
-            voteEntry.Type = EnumHelper.GetName<VoteEntryTypes>(voteEntryViewModel.VoteEntryType);
-            voteEntry.TeamId = voteEntryViewModel.TeamId;
-            voteEntry.Payment.Amount = voteEntryViewModel.PaymentAmount;
-            voteEntry.Payment.Currency = EnumHelper.GetName<PaymentCurrencies>(voteEntryViewModel.PaymentCurrency);
-            voteEntry.Payment.PesoEquivalent = voteEntryViewModel.PaymentPesoEquivalent;
-            UpdateVoteEntry(voteEntry);
+            hmsdb.Entry(voteEntry).State = EntityState.Modified;
         }
 
-        public void DeleteVoteEntryViewModel(int voteEntryId)
+        public VoteEntry Find(int id)
         {
-            VoteEntry voteEntry = RetrieveSingleVoteEntry(voteEntryId);
-            DeleteVoteEntry(voteEntry);
+            return hmsdb.VoteEntry.Find(id);
         }
 
-        public VoteEntryViewModel PrepareViewDataResources(VoteEntryViewModel voteEntryViewModel)
+        public void Delete(VoteEntry voteEntry)
         {
-            voteEntryViewModel.Teams = teamRepository.RetrieveAll().Select(x =>
-                                            new SelectListItem{
-                                                Text = x.Name,
-                                                Value = x.Id.ToString()
-                                            });
-            voteEntryViewModel.VoteEntryTypes = EnumHelper.GetEnumSelectList<VoteEntryTypes>();
-            voteEntryViewModel.PaymentCurrencies = EnumHelper.GetEnumSelectList<PaymentCurrencies>();
-
-            return voteEntryViewModel;
+            hmsdb.VoteEntry.Remove(voteEntry);
         }
 
-
-        #endregion
-
-        #region Private Methods
-
-        private VoteEntryViewModel ConvertToVoteEntryviewModel(VoteEntry voteEntry, Voter voter)
+        public void Dispose()
         {
-            VoteEntryViewModel voteEntryViewModel = new VoteEntryViewModel();
-
-            voteEntryViewModel.VoteEntryId = voteEntry.Id;
-            voteEntryViewModel.VoteEntryType = voteEntry.Type;
-            voteEntryViewModel.VoterLastName = voter.LastName;
-            voteEntryViewModel.VoterFirstName = voter.FirstName;
-            voteEntryViewModel.VoterEmailAddress = voter.EmailAddress;
-            voteEntryViewModel.PaymentAmount = voteEntry.Payment.Amount;
-            voteEntryViewModel.PaymentCurrency = voteEntry.Payment.Currency;
-            voteEntryViewModel.PaymentPesoEquivalent = voteEntry.Payment.PesoEquivalent;
-            voteEntryViewModel.TeamId = voteEntry.TeamId;
-            voteEntryViewModel.TeamName = teamRepository.RetrieveTeamName(voteEntry.TeamId);
-
-            return voteEntryViewModel;
+            hmsdb.Dispose();
         }
 
-        private VoteEntry ConvertToVoteEntryEntity(VoteEntryViewModel voteEntryViewModel, Voter voter)
-        {
-            VoteEntry voteEntry = new VoteEntry(voteEntryViewModel.VoteEntryId);
-            voteEntry.Type = EnumHelper.GetName<VoteEntryTypes>(voteEntryViewModel.VoteEntryType);
-            voteEntry.TeamId = voteEntryViewModel.TeamId;
-            voteEntry.Payment = new Payment(voteEntryViewModel.PaymentAmount, EnumHelper.GetName<PaymentCurrencies>(voteEntryViewModel.PaymentCurrency), voteEntryViewModel.PaymentPesoEquivalent);
-            voteEntry.VoterId = voter.Id;
-            return voteEntry;
-        }
 
-        private List<VoteEntry> RetrieveAll()
-        {
-            using (var _db = new HMSDb())
-            {
-                List<VoteEntry> voteEntries = _db.VoteEntry.AsNoTracking().Include("Payment").ToList();
-                return voteEntries;
-            }
-        }
-
-        private void StoreVoteEntry(VoteEntry voteEntry)
-        {
-            using (var _db = new HMSDb())
-            {
-                if (voteEntry != null)
-                {
-                    _db.VoteEntry.Add(voteEntry);
-                    _db.SaveChanges();
-                }
-            }
-        }
-
-        private VoteEntry RetrieveSingleVoteEntry(int voteEntryId)
-        {
-            using (var _db = new HMSDb())
-            {
-                if (voteEntryId != null)
-                {
-                    var voteEntry = _db.VoteEntry.Include("Payment").FirstOrDefault(entry => entry.Id == voteEntryId);
-                    return voteEntry;
-                }
-            }
-            return null;
-        }
-
-        private void UpdateVoteEntry(VoteEntry voteEntry)
-        {
-            using (var _db = new HMSDb())
-            {
-                _db.Entry(voteEntry).State = EntityState.Modified;
-                _db.Entry(voteEntry.Payment).State = EntityState.Modified;
-                _db.SaveChanges();
-            }
-        }
-
-        private void DeleteVoteEntry(VoteEntry voteEntry)
-        {
-            using (var _db = new HMSDb())
-            {
-                _db.Entry(voteEntry).State = EntityState.Deleted;
-                _db.SaveChanges();
-            }
-        }
-        #endregion
     }
 }

@@ -1,112 +1,91 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
+using HMSWebApp.Interfaces;
 using HMSWebApp.Models;
 
 namespace HMSWebApp.Repository
 {
-    public class VoterRepository
+    public class VoterRepository : IVoterRepository
     {
+        private HMSDb hmsdb;
 
-        #region Private Methods
-
-        private void StoreVoter(Voter voter)
+        public VoterRepository(UnitOfWorkHms uow)
         {
-            using (var _db = new HMSDb())
-            {
-                if (voter != null)
-                {
-                    _db.Voter.Add(voter);
-                    _db.SaveChanges();
-                }
-            }
+            hmsdb = uow.HmsDb;
         }
 
-        private void UpdateVoter(Voter voter)
+        public IQueryable<Voter> All
         {
-            using (var _db = new HMSDb())
-            {
-                if (voter != null)
-                {
-                    _db.Entry(voter).State = EntityState.Modified;
-                    _db.SaveChanges();
-                }
-            }
+            get { return hmsdb.Voter; }
         }
 
-        #endregion
 
-        #region Public Methods
-
-        public Voter RetrieveById(int voterId)
+        public IQueryable<Voter> AllIncluding(string[] includeProperties)
         {
-            using (var _db = new HMSDb())
+            IQueryable<Voter> query = hmsdb.Voter;
+            foreach (var includeProperty in includeProperties)
             {
-                var voter = _db.Voter.Find(voterId);
-                return voter;
+                query = query.Include(includeProperty);
             }
+            return query;
         }
 
-        public Voter RetrieveByName(string LastName, string FirstName)
+        public Voter SingleIncluding(int id, string[] includeProperties)
         {
-            using (var _db = new HMSDb())
+            IQueryable<Voter> query = hmsdb.Voter;
+            foreach (var includeProperty in includeProperties)
             {
-                Voter voter = _db.Voter.Where(v => v.LastName == LastName && v.FirstName == FirstName).FirstOrDefault();
-                return voter;
+                query = query.Include(includeProperty);
             }
+            return query.FirstOrDefault(voter => voter.Id == id);
         }
 
-        public Voter RetrieveByEmailAddress(string emailAddress)
+        public void InsertGraph(Voter voter)
         {
-            using (var _db = new HMSDb())
-            {
-                if (!string.IsNullOrEmpty(emailAddress))
-                {
-                    Voter voter = _db.Voter.Where(v => v.EmailAddress == emailAddress).FirstOrDefault();
-                    return voter;
-                }
-                return null;
-            }
+            hmsdb.Voter.Add(voter);
+        }
+
+        public void InsertObject(Voter voter)
+        {
+            hmsdb.Entry(voter).State = EntityState.Added;
+        }
+
+        public void Update(Voter voter)
+        {
+            hmsdb.Entry(voter).State = EntityState.Modified;
+        }
+
+        public Voter Find(int id)
+        {
+            return hmsdb.Voter.Find(id);
+        }
+
+        public void Delete(Voter voter)
+        {
+            hmsdb.Voter.Remove(voter);
+        }
+
+        public void Dispose()
+        {
+            hmsdb.Dispose();
+        }
+
+        public Voter FindByEmailAddress(string emailAddress)
+        {
+            return hmsdb.Voter.FirstOrDefault(voter => voter.EmailAddress == emailAddress);
         }
 
         public bool VoterAlreadyExists(Voter voter)
         {
-            if (RetrieveByEmailAddress(voter.EmailAddress) == null)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        public void AddVoter(Voter voter)
-        {
             if (voter != null)
             {
-                StoreVoter(voter);
+                if (FindByEmailAddress(voter.EmailAddress) != null) return true;
+                else return false;
             }
+            else return false;
         }
 
-        public void UpdateVoterDetails(Voter originalVoter, Voter newVoter)
-        {
-            if (originalVoter != null && newVoter != null)
-            {
-                originalVoter.LastName = newVoter.LastName;
-                originalVoter.FirstName = newVoter.FirstName;
-                originalVoter.EmailAddress = newVoter.EmailAddress;
-                UpdateVoter(originalVoter);
-            }
-        }
 
-        public Voter CreateNewVoter(string lastName, string firstName, string emailAddress)
-        {
-            Voter voter = new Voter(lastName, firstName, emailAddress);
-            return voter;
-        }
-        #endregion
     }
 }

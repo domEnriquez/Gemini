@@ -1,50 +1,76 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using HMSWebApp.Interfaces;
 using HMSWebApp.Models;
+using System.Data;
 
 namespace HMSWebApp.Repository
 {
-    public class PaymentRepository
+    public class PaymentRepository : IPaymentRepository
     {
-        HMSDb _db = new HMSDb();
+        private HMSDb hmsdb;
 
-        /// <summary>
-        ///  Retrieves a payment object based from its id
-        /// </summary>
-        /// <param name="voteEntryId"></param>
-        /// <returns></returns>
-        public Payment RetrieveById(int paymentId) 
+        public PaymentRepository(UnitOfWorkHms uow)
         {
-            var payment = _db.Payment.Where(p => p.Id == paymentId).FirstOrDefault();
-            return payment;
+            hmsdb = uow.HmsDb;
         }
 
-        /// <summary>
-        ///  Stores a payment into the database
-        /// </summary>
-        /// <param name="payment">The payment object</param>
-        public void StorePayment(Payment payment)
+        public IQueryable<Payment> All
         {
-            if (payment != null)
-            {
-                _db.Payment.Add(payment);
-                _db.SaveChanges();
-            }
+            get { return hmsdb.Payment; }
         }
 
-        /// <summary>
-        ///  Updates a payment in the database
-        /// </summary>
-        /// <param name="payment">The payment object</param>
-        public void UpdatePayment(Payment payment)
+        public IQueryable<Payment> AllIncluding(string[] includeProperties)
         {
-            if (payment != null)
+            IQueryable<Payment> query = hmsdb.Payment;
+            foreach (var includeProperty in includeProperties)
             {
-                _db.Entry(payment).State = System.Data.EntityState.Modified;
-                _db.SaveChanges();
+                query = query.Include(includeProperty);
             }
+            return query;
+        }
+
+        public Payment SingleIncluding(int id, string[] includeProperties)
+        {
+            IQueryable<Payment> query = hmsdb.Payment;
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+            return query.FirstOrDefault(payment => payment.Id == id);
+        }
+
+        public Payment Find(int id)
+        {
+            return hmsdb.Payment.Find(id);
+        }
+
+        public void InsertGraph(Payment payment)
+        {
+            hmsdb.Payment.Add(payment);
+        }
+
+        public void InsertObject(Payment payment)
+        {
+            hmsdb.Entry(payment).State = EntityState.Added;
+        }
+
+        public void Update(Payment payment)
+        {
+            hmsdb.Entry(payment).State = EntityState.Modified;
+        }
+
+        public void Delete(Payment payment)
+        {
+            hmsdb.Payment.Remove(payment);
+        }
+
+        public void Dispose()
+        {
+            hmsdb.Dispose();
         }
     }
 }

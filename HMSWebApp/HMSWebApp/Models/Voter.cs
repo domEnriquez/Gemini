@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using HMSWebApp.Enums;
+using HMSWebApp.Interfaces;
 
 namespace HMSWebApp.Models
 {
-    public class Voter
+    public class Voter : IObjectWithState
     {
         public Voter() 
         {
@@ -45,5 +48,10 @@ namespace HMSWebApp.Models
                 return fullName;
             }
         }
+
+
+        [NotMapped]
+        public State State { get; set; }
+
     }
 }

@@ -2,7 +2,7 @@
 
 @foreach (var item in Model) {
     <div class="voteEntryItem">
-        <input type="hidden" value=@item.VoteEntryId />
+        <input type="hidden" value="@item.VoteEntryId" />
         <h4>@item.VoterLastName @item.VoterFirstName</h4>
         <h4>@item.VoterEmailAddress</h4>
         <h4>@item.VoteEntryType</h4>

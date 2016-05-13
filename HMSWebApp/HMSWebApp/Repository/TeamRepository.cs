@@ -1,44 +1,75 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
-using System.Web;
+using HMSWebApp.Interfaces;
 using HMSWebApp.Models;
 
 namespace HMSWebApp.Repository
 {
-    public class TeamRepository
+    public class TeamRepository : ITeamRepository 
     {
-        public Team RetrieveById(int teamId)
+        private HMSDb hmsdb;
+
+        public TeamRepository(UnitOfWorkHms uow)
         {
-            using (var _db = new HMSDb())
+            hmsdb = uow.HmsDb;
+        }
+
+        public IQueryable<Team> All
+        {
+            get { return hmsdb.Team; }
+        }
+
+        public IQueryable<Team> AllIncluding(string[] includeProperties)
+        {
+            IQueryable<Team> query = hmsdb.Team;
+            foreach (var includeProperty in includeProperties)
             {
-                Team team = _db.Team.Find(teamId);
-                return team;
+                query = query.Include(includeProperty);
             }
+            return query;
         }
 
-        public Team RetrieveByName(string teamName)
+        public Team SingleIncluding(int id, string[] includeProperties)
         {
-            using (var _db = new HMSDb())
+            IQueryable<Team> query = hmsdb.Team;
+            foreach (var includeProperty in includeProperties)
             {
-                Team team = _db.Team.AsNoTracking().Where(t => t.Name == teamName).FirstOrDefault();
-                return team;
+                query = query.Include(includeProperty);
             }
-
+            return query.FirstOrDefault(team => team.Id == id);
         }
 
-        public string RetrieveTeamName(int teamId)
+        public Team Find(int id)
         {
-            return RetrieveById(teamId).Name;
+            return hmsdb.Team.Find(id);
         }
 
-        public List<Team> RetrieveAll()
+        public void InsertGraph(Team team)
         {
-            using (var _db = new HMSDb())
-            {
-                List<Team> teams = _db.Team.AsNoTracking().ToList();
-                return teams;
-            }
+            hmsdb.Team.Add(team);
         }
+
+        public void InsertObject(Team team)
+        {
+            hmsdb.Entry(team).State = EntityState.Added;
+        }
+
+        public void Update(Team team)
+        {
+            hmsdb.Entry(team).State = EntityState.Modified;
+        }
+
+        public void Delete(Team team)
+        {
+            hmsdb.Team.Remove(team);
+        }
+
+        public void Dispose()
+        {
+            hmsdb.Dispose();
+        }
+
     }
 }
