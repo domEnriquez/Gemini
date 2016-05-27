@@ -14,8 +14,12 @@
 
 .jumbotron-hmsbanner {
     background: #d3d3d3;
-    /*background-image: url('images/HMS_Logo.png');
-    background-size: 1400px;*/
+    /*
+    background-image: url('images/HMS_Logo.png');
+    background-size: 1400px;
+    background-image: url("~Images/Home/School_bg.png");
+    background-repeat: repeat
+    */
 }
 
 .div-abouthms {

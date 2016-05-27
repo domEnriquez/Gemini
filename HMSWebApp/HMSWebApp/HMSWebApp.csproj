@@ -186,6 +186,7 @@
     <Compile Include="Common\StateHelpers.cs" />
     <Compile Include="Common\VoteEntryMapper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\VoteEntryController.cs" />
     <Compile Include="Enums\PaymentCurrencies.cs" />
     <Compile Include="Enums\State.cs" />
@@ -219,6 +220,7 @@
     <Content Include="Content\Bootstrap\bootstrap.css" />
     <Content Include="Content\Bootstrap\bootstrap.min.css" />
     <Content Include="Content\Home\Home.css" />
+    <Content Include="Content\Login\Login.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -278,6 +280,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\Home\FoodForHungryMinds.png" />
     <Content Include="Images\Home\HMS_Logo.png" />
+    <Content Include="Images\Home\School_bg.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
@@ -341,6 +344,7 @@
     <Content Include="Views\VoteEntry\Encode.cshtml" />
     <Content Include="Views\VoteEntry\Edit.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Login\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\VoteEntry\PartialViews\" />
