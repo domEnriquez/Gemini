@@ -8,37 +8,7 @@
 }
 
 .btn-signin {
-    float: right;
-    margin-top: 10px;
-}
-
-.jumbotron-hmsbanner {
-    background: #d3d3d3;
-    /*
-    background-image: url('images/HMS_Logo.png');
-    background-size: 1400px;
-    background-image: url("~Images/Home/School_bg.png");
-    background-repeat: repeat
-    */
-}
-
-.div-abouthms {
-    background-color: #d3cdcd;
-    opacity: 0.5;
-    height: 4em;
-    margin-top: 5.0em;
-    position: relative;
-    width: 300px;
-}
-
-.h2-ontop {
-    position: relative;
-    top: 3em;
-}
-
-#p_jumbotron { 
-    font-size: 13px;
-    text-align: justify;
+    margin-top: 25px;
 }
 
 .label-general {
@@ -57,6 +27,19 @@
     font-weight: bold;
     font-family: Arial Narrow;
     font-size: medium;
+}
+
+.p-forgot {
+    float: right;
+    margin: 0px;
+}
+
+#divForgot {
+    font-size: 13px;
+}
+
+#aForgot {
+    cursor: pointer;
 }
 
 /* J-Carousel */

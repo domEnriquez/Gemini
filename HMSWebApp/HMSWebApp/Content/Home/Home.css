@@ -1,5 +1,9 @@
-﻿body  {
+﻿@import url('~/Content/Bootstrap/css');
+
+body {
     padding-top: 50px;
+    background: url('../images/Home/HMS_Logo.png') no-repeat center center fixed;
+    background-size: 100% auto;
 }
 
 .starter-template  {

@@ -25,18 +25,24 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <img src="~/Images/Home/FoodForHungryMinds.png" height="45"/>
                     <ul class="nav navbar-nav"></ul>
-                    <button type="button" class="btn btn-info btn-sm btn-signin">
-                        Sign in
-					</button>
+                    @if(ViewContext.Controller.GetType().Name == "LoginController") 
+                    {
+                        <!--If LoginController calls this View, Sign In button should not be displayed-->
+                        
+                    }else{
+                        <!--Otherwise, Sign In button should be diplayed-->
+                        <button type="button" class="btn btn-info btn-sm btn-signin">
+                            Sign in
+					    </button>  
+                    }
                     <!--Sign In Button : Redirects to Sign in dialog box-->
                 </div>
-				
 				<!--Insert Welcome, <Username> Dropdown-->
 				
             </div>
 		<!--end: nav-->
         </nav>
-        
+        <div></div>
         @RenderBody()
 
         @Scripts.Render("~/bundles/jquery")

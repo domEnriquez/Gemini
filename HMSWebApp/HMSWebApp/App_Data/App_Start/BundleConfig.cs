@@ -55,6 +55,7 @@ namespace HMSWebApp
             bundles.Add(new StyleBundle("~/Content/home/css").Include(
                 "~/Content/Home/Home.css"
                 ));
+
         }
     }
 }
